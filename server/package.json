@@ -1,0 +1,23 @@
+{
+    "name": "CICDAPI",
+    "description": "A very simple demo API",
+    "version": "1.0.0",
+    "main": "server.js",
+    "author": "Jonathan Boeke",
+    "license": "MIT",
+    "scripts": {
+        "start": "SET NODE_ENV=dev && node src/server.js",
+        "test": "mocha --timeout 10000 --exit"
+    },
+    "dependencies": {
+        "@vue/cli": "^4.5.15",
+        "better-sqlite3": "^7.4.6",
+        "chai": "^4.3.4",
+        "chai-http": "^4.3.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.2",
+        "md5": "^2.3.0",
+        "mocha": "^9.1.3",
+        "path": "^0.12.7"
+    }
+}

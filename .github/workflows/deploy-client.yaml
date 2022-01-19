@@ -1,0 +1,46 @@
+# ------------------------------------------------------------------------------------
+# Deploy the Vue.js Client
+#
+# Actions used:
+# https://github.com/marketplace/actions/checkout
+# https://github.com/marketplace/actions/setup-node-js-environment
+# https://github.com/marketplace/actions/upload-a-build-artifact
+# https://github.com/marketplace/actions/copy-via-ssh
+# ------------------------------------------------------------------------------------
+
+name: Client Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    defaults:
+      run:
+        working-directory: ./client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+
+      # We can skip the name
+      - run: npm install
+      - run: npm run build
+      
+      # Continuous Delivery
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-contents
+          path: ${{ github.workspace }}/client/dist
+
+      # Continuous Deployment  
+      - name: Copy folder content recursively to remote
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: ./client/dist
+          remote: /var/www/html/client
+          rmRemote: true
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASS }}

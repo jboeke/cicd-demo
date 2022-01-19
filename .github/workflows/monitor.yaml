@@ -1,0 +1,32 @@
+# ------------------------------------------------------------------------------------
+# Periodically check if our Client and Server are responsive
+#
+# Actions used:
+# https://github.com/marketplace/actions/url-health-check
+# ------------------------------------------------------------------------------------
+
+name: Monitoring
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '9 0-23/4  * * *'
+  
+jobs:
+  url_response_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the deployed service URL
+        uses: jtalk/url-health-check-action@v2
+        with:
+          # Check the following URLs one by one sequentially
+          # Substitute with the URLs you want to check
+          url: https://www.google.com|https://orteil.dashnet.org/cookieclicker/
+          # Follow redirects, or just report success on 3xx status codes
+          follow-redirect: false # Optional, defaults to "false"
+          # Fail this action after this many failed attempts
+          max-attempts: 3 # Optional, defaults to 1
+          # Delay between retries
+          retry-delay: 5s # Optional, only applicable to max-attempts > 1
+          # Retry all errors, including 404. This option might trigger curl upgrade.
+          retry-all: false # Optional, defaults to "false"
