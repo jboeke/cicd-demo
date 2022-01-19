@@ -74,4 +74,4 @@ https://docs.github.com/en/actions/using-workflows/reusing-workflows#creating-a-
 
 Q: What if the requred steps stall with the `Expected — Waiting for status to be reported` message?
 
-A: You can push and empty commit to re-trigger the required workflows with `git commit --amend --no-edit`
+A: You can push an empty commit to re-trigger the required workflows with `git commit --amend --no-edit`
