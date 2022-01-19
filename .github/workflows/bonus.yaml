@@ -1,0 +1,29 @@
+# ------------------------------------------------------------------------------------
+# A scheduled email...
+#
+# Actions used:
+# https://github.com/marketplace/actions/checkout
+# https://github.com/marketplace/actions/sendgrid-action
+# ------------------------------------------------------------------------------------
+
+name: Bonus Workflow
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 20 * * *'
+  
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+      
+      - name: Set script permissions
+        run: chmod +x .github/sendgrid.js
+    
+      - name: SendGrid
+        uses: peter-evans/sendgrid-action@v1.0.1
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}

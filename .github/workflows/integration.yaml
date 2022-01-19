@@ -1,0 +1,85 @@
+# ------------------------------------------------------------------------------------
+# Build and Test the Client and the Server
+#
+# Actions used:
+# https://github.com/marketplace/actions/checkout
+# https://github.com/marketplace/actions/setup-node-js-environment
+# ------------------------------------------------------------------------------------
+
+name: Continuous Integration
+
+# Events control when the action will run. This workflow is triggered by two different conditions:
+# 1) a manually dispatched request (button click) from Github
+# 2) on a pull request event, but only for the main branch
+
+on:
+  workflow_dispatch:      
+  pull_request: 
+    branches:
+      - main
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# This workflow contains two jobs that run in parallel
+jobs:
+  # job 1 - Test the Express API
+  test_server:
+    defaults:
+      # Change where our commands will run to the client subdirectory
+      run:
+        working-directory: ./server
+
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out our repository under $GITHUB_WORKSPACE, so our job can access it
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+      
+      # Add node to our build environment
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+       
+      # Install the dependencies from package.json
+      - name: Install dependencies
+        run: npm ci
+
+      # Runs the test script defined in package.json 
+      - name: Test application
+        run: npm test
+                
+  # job 2 - test the vue client
+  test_client:
+      # If we wanted to be dependent on the success of the previous job, we could use the next line
+      # needs: test_server
+      defaults:
+        # Change where our commands will run to the client subdirectory
+        run:
+          working-directory: ./client
+
+      # The type of runner that the job will run on
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout main branch
+          uses: actions/checkout@v2
+
+        - name: Use Node.js
+          uses: actions/setup-node@v1
+          with:
+            node-version: '14.x'
+
+        # Install dependencies from package.json
+        - name: Install dependencies
+          run: npm install
+
+        # Lint our javascript
+        - name: Review style rules
+          run: npm run lint
+      
+        # Build in lieu of tests
+        - name: Build application
+          run: npm run build

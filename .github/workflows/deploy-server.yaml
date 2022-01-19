@@ -1,0 +1,66 @@
+# ------------------------------------------------------------------------------------
+# Deploy the Express API content server
+#
+# Actions used:
+# https://github.com/marketplace/actions/checkout
+# https://github.com/marketplace/actions/setup-node-js-environment
+# https://github.com/marketplace/actions/ssh-remote-commands
+# ------------------------------------------------------------------------------------
+
+name: Server Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    defaults:
+      run:
+        working-directory: ./server
+    strategy:
+        matrix:
+          os: [ubuntu-latest, windows-latest]
+          node-version: [14.x, 16.x]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm ci
+      - run: npm test
+
+  # git pull https://token@github.com/repo
+
+  deploy_via_ssh:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASS }}
+          port: ${{ secrets.REMOTE_PORT }}
+          # script_stop: true
+          script: |
+            cd /var/www/html/server
+            git stash
+            git checkout main
+            ${{ secrets.REMOTE_SERVER_PULL_COMMAND }}
+            rm -rf node_modules
+            rm -rf client
+            rm -rf docs
+            rm -rf .github
+            rm -rf README.md
+            cd server
+            cp -r . ..
+            cd ..
+            rm -rf server
+            npm ci
+            pm2 restart 0
