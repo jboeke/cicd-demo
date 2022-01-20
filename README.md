@@ -10,6 +10,25 @@ I am an experienced developer, but a novice when it comes to Express and Vue.
 
 Use at your own risk.
 
+## How to run it
+
+Install [Node.js](https://nodejs.org/en/download/) if you don't have it already.
+
+### Node Express API Server
+
+1) Switch to the `server` directory
+2) Install npm packages with `npm install`
+3) Run the server with `npm start`
+
+
+### Vue.js Client
+
+1) Ensure the server is running.
+2) Switch to the `client` directory
+3) Install npm packages with `npm install`
+4) Run the server with `npm run serve`
+5) Other commands (e.g. - build) can be found in the [client README](https://github.com/jboeke/cicd-demo/tree/main/client#readme).
+
 ---
 
 # Resources
