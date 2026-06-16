@@ -1,3 +1,5 @@
+> IMPORTANT! This repo is archived and no longer maintained. It is using old packages with known security vulnerabilities. Use at your own risk.
+
 # CI/CD Node App
 
 This is a sample app created for the [January 2022 FCIP meetup](https://www.meetup.com/goFCIP/events/273935663/). 
